@@ -1,6 +1,8 @@
+require('dotenv').config()
 const { response, request } = require('express')
 const express = require('express')
 let morgan = require('morgan')
+const Person = require('./models/person')
 
 const app = express()
 
@@ -8,7 +10,7 @@ app.use(express.json())
 morgan.token('body', (req, res) => JSON.stringify(req.body));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
-let persons = [
+/* let persons = [
 	{ 
 		"id": 1,
 		"name": "Arto Hellas", 
@@ -29,10 +31,12 @@ let persons = [
 		"name": "Mary Poppendieck", 
 		"number": "39-23-6423122"
 	  }
-]
+] */
 
 app.get('/api/persons', (request, response) => {
-	response.json(persons)
+	Person.find({}).then((persons) => {
+		response.json(persons)
+	})
 })
 
 app.get('/api/info', (request, response) => {
@@ -40,21 +44,20 @@ app.get('/api/info', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-	const id = Number(request.params.id)
-	const person = persons.find(person => person.id === id)
-
-	if(person) {
-		response.json(person)
-	} else {
-		response.status(404).end()
-	}
+	Person.findById(request.params.id).then((person) => {
+		if (person) {
+			response.json(person)
+		  } else {
+			response.status(404).end()
+		  }
+	})
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-	const id = Number(request.params.id)
-	persons = persons.filter(person => person.id !== id)
+	Person.deleteOne(request.params.id).then((result) => {
+		response.status(204).end()
+	})
 	
-	response.status(204).end()
 })
 
 const generateId = (maxVal) => {
