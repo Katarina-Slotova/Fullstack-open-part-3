@@ -49,10 +49,12 @@ const App = () => {
 
 	const updateContact = (id, newNumber) => {
 		const person = persons.find(person => person.id === id)
+		console.log(`person ${person.id}`)
 		const changedContact = {...person, number: newNumber}
-		
+		console.log(`person ${changedContact.id}`)
+
 		pbService
-			.update(person.id, changedContact)
+			.update(changedContact.id, changedContact)
 			.then(returnedPerson => {
 				setPersons(persons.map(person => person.id === id ? returnedPerson : person))
 				setNewName('')
@@ -63,10 +65,12 @@ const App = () => {
 				}, 5000)
 			})
 			.catch(error => {
-				setErrorMessage(`Information on ${person.name} has already been removed from the server.`)
-				setTimeout(() => {
-					setErrorMessage(null)
-				}, 5000)
+					console.log(error.response.data.error)
+					setErrorMessage(`Information on ${person.name} has already been removed from the server.`)
+					setTimeout(() => {
+						setErrorMessage(null)
+					}, 5000)
+					//setPersons(persons.filter(person => person.id !== id))
 			})
 	}
 	
@@ -93,6 +97,15 @@ const App = () => {
 					setTimeout(() => {
 						setNotification(null)
 					}, 5000)
+				})
+				.catch(error => {
+					console.log(error.response.data.error)
+					setErrorMessage(error.response.data.error)
+					setTimeout(() => {
+						setErrorMessage(null)
+					}, 5000)
+					setNewName('')
+					setNewNumber('')
 				})
 		}
 	}

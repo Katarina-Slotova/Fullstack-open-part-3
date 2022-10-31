@@ -13,3 +13,14 @@ GET http://localhost:3001/api/persons
 ###
 
 DELETE http://localhost:3001/api/persons/635bc924c2f01354600cb228
+
+###
+
+PUT http://localhost:3001/api/persons/635a32b33ada0c54ad1ee981
+Content-Type: application/json
+
+{
+	"name":"Anna",
+	"number":"040-123456",
+	"id":"635a32b33ada0c54ad1ee981"
+}
